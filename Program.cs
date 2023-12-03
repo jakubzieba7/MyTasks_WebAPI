@@ -1,4 +1,10 @@
 
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using MyTasks_WebAPI.Data;
+using MyTasks_WebAPI.Domains;
+using System;
+
 namespace MyTasks_WebAPI
 {
     public class Program
@@ -14,6 +20,14 @@ namespace MyTasks_WebAPI
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
+            builder.Services.AddDbContext <ApplicationDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+            builder.Services.AddAuthentication(IdentityConstants.ApplicationScheme).AddIdentityCookies();
+            builder.Services.AddAuthorizationBuilder();
+
+            builder.Services.AddIdentityCore<ApplicationUser>().AddEntityFrameworkStores<ApplicationDbContext>().AddApiEndpoints();
+
+
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
@@ -22,6 +36,8 @@ namespace MyTasks_WebAPI
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
+
+            app.MapIdentityApi<ApplicationUser>();
 
             app.UseHttpsRedirection();
 
