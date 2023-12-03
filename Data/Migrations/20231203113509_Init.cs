@@ -187,7 +187,7 @@ namespace MyTasks_WebAPI.Data.Migrations
                     CategoryId = table.Column<int>(type: "int", nullable: false),
                     IsExecuted = table.Column<bool>(type: "bit", nullable: false),
                     Term = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false)
+                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -196,8 +196,7 @@ namespace MyTasks_WebAPI.Data.Migrations
                         name: "FK_Tasks_AspNetUsers_UserId",
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_Tasks_Categories_CategoryId",
                         column: x => x.CategoryId,

@@ -1,7 +1,4 @@
 ﻿{
-  "ConnectionStrings": {
-    "DefaultConnection": "Server=.\\SIGMANEST;Database=MyTasks_WebAPI;User Id=DOTNET;Password=Shark1445NE$T;TrustServerCertificate=True;"
-  },
   "$schema": "http://json.schemastore.org/launchsettings.json",
   "iisSettings": {
     "windowsAuthentication": false,

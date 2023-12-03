@@ -12,7 +12,7 @@ using MyTasks_WebAPI.Data;
 namespace MyTasks_WebAPI.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20231203110743_Init")]
+    [Migration("20231203113509_Init")]
     partial class Init
     {
         /// <inheritdoc />
@@ -275,7 +275,6 @@ namespace MyTasks_WebAPI.Data.Migrations
                         .HasColumnType("nvarchar(50)");
 
                     b.Property<string>("UserId")
-                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
@@ -359,9 +358,7 @@ namespace MyTasks_WebAPI.Data.Migrations
 
                     b.HasOne("MyTasks_WebAPI.Domains.ApplicationUser", "User")
                         .WithMany("Tasks")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("UserId");
 
                     b.Navigation("Category");
 
