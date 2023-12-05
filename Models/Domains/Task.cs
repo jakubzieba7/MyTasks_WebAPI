@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace MyTasks_WebAPI.Domains
+namespace MyTasks_WebAPI.Models.Domains
 {
     public class Task
     {

@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using System.Collections.ObjectModel;
 
-namespace MyTasks_WebAPI.Domains
+namespace MyTasks_WebAPI.Models.Domains
 {
     public class ApplicationUser : IdentityUser
     {

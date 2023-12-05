@@ -1,8 +1,8 @@
 
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using MyTasks_WebAPI.Data;
-using MyTasks_WebAPI.Domains;
+using MyTasks_WebAPI.Models.Data;
+using MyTasks_WebAPI.Models.Domains;
 using System;
 
 namespace MyTasks_WebAPI

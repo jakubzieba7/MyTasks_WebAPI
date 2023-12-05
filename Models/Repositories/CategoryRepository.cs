@@ -1,7 +1,7 @@
-﻿using MyTasks_WebAPI.Data;
-using MyTasks_WebAPI.Domains;
+﻿using MyTasks_WebAPI.Models.Data;
+using MyTasks_WebAPI.Models.Domains;
 
-namespace MyTasks_WebAPI.Repositories
+namespace MyTasks_WebAPI.Models.Repositories
 {
     public class CategoryRepository
     {

@@ -1,8 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using MyTasks_WebAPI.Data;
-using Task = MyTasks_WebAPI.Domains.Task;
+using MyTasks_WebAPI.Models.Data;
+using Task = MyTasks_WebAPI.Models.Domains.Task;
 
-namespace MyTasks_WebAPI.Repositories
+namespace MyTasks_WebAPI.Models.Repositories
 {
     public class TaskRepository
     {
