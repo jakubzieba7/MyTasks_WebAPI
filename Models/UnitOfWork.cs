@@ -14,8 +14,8 @@ namespace MyTasks_WebAPI.Models
             CategoryRepository = new CategoryRepository(context);
         }
 
-        public CategoryRepository CategoryRepository { get; set; }
-        public TaskRepository TaskRepository { get; set; }
+        public CategoryRepository CategoryRepository { get; }
+        public TaskRepository TaskRepository { get; }
 
         public void Complete()
         {
