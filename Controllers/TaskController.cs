@@ -2,6 +2,7 @@
 using MyTasks_WebAPI.Models.Response;
 using MyTasks_WebAPI.Models;
 using Task = MyTasks_WebAPI.Models.Domains.Task;
+using Microsoft.AspNetCore.Authorization;
 
 namespace MyTasks_WebAPI.Controllers
 {
@@ -17,7 +18,7 @@ namespace MyTasks_WebAPI.Controllers
         }
 
 
-        [HttpGet]
+        [HttpGet(Name = "Get tasks"), Authorize]
         public DataResponse<IEnumerable<Task>> Get(string userId)
         {
             var response = new DataResponse<IEnumerable<Task>>();

@@ -1,9 +1,12 @@
-
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi.Models;
+using MyTasks_WebAPI.Models;
 using MyTasks_WebAPI.Models.Data;
 using MyTasks_WebAPI.Models.Domains;
+using Swashbuckle.AspNetCore.Filters;
 using System;
+using System.Security.Claims;
 
 namespace MyTasks_WebAPI
 {
@@ -13,20 +16,35 @@ namespace MyTasks_WebAPI
         {
             var builder = WebApplication.CreateBuilder(args);
 
+            builder.Services.AddScoped<UnitOfWork, UnitOfWork>();
+
             // Add services to the container.
 
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
-            builder.Services.AddSwaggerGen();
+            builder.Services.AddSwaggerGen(options =>
+            {
+                options.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme
+                {
+                    In = ParameterLocation.Header,
+                    Name = "Authorization",
+                    Type = SecuritySchemeType.ApiKey
+                });
 
-            builder.Services.AddDbContext <ApplicationDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+                options.OperationFilter<SecurityRequirementsOperationFilter>();
+            });
 
+            builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+            builder.Services.AddAuthentication().AddBearerToken(IdentityConstants.BearerScheme);
             builder.Services.AddAuthentication(IdentityConstants.ApplicationScheme).AddIdentityCookies();
             builder.Services.AddAuthorizationBuilder();
+            
+            //builder.Services.AddAuthorization();
+            //builder.Services.AddIdentityApiEndpoints<ApplicationUser>().AddEntityFrameworkStores<ApplicationDbContext>().AddApiEndpoints();
 
             builder.Services.AddIdentityCore<ApplicationUser>().AddEntityFrameworkStores<ApplicationDbContext>().AddApiEndpoints();
-
 
             var app = builder.Build();
 
@@ -43,6 +61,7 @@ namespace MyTasks_WebAPI
 
             app.UseAuthorization();
 
+            app.MapGet("/test",(ClaimsPrincipal user)=>$"Zalogowany u¿ytkownik to {user.Identity!.Name}").RequireAuthorization();
 
             app.MapControllers();
 
