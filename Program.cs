@@ -5,7 +5,7 @@ using MyTasks_WebAPI.Models;
 using MyTasks_WebAPI.Models.Data;
 using MyTasks_WebAPI.Models.Domains;
 using Swashbuckle.AspNetCore.Filters;
-using System;
+using System.Reflection;
 using System.Security.Claims;
 
 namespace MyTasks_WebAPI
@@ -33,6 +33,28 @@ namespace MyTasks_WebAPI
                 });
 
                 options.OperationFilter<SecurityRequirementsOperationFilter>();
+
+                options.SwaggerDoc("v1", new OpenApiInfo
+                {
+                    Version = "v1",
+                    Title = "ToDo API",
+                    Description = "An ASP.NET Core Web API for managing ToDo items",
+                    TermsOfService = new Uri("https://example.com/terms"),
+                    Contact = new OpenApiContact
+                    {
+                        Name = "Example Contact",
+                        Url = new Uri("https://example.com/contact")
+                    },
+                    License = new OpenApiLicense
+                    {
+                        Name = "Example License",
+                        Url = new Uri("https://example.com/license")
+                    }
+                });
+
+                // using System.Reflection;
+                var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+                options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
             });
 
             builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));

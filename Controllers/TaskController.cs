@@ -19,7 +19,11 @@ namespace MyTasks_WebAPI.Controllers
             _unitOfWork = unitOfWork;
         }
 
-
+        /// <summary>
+        /// Get all tasks by userId
+        /// </summary>
+        /// <param name="userId">Logged userId</param>
+        /// <returns>DataResponse - IEnumerable TaskDto</returns>
         [HttpGet(Name = "Get tasks"), Authorize]
         public DataResponse<IEnumerable<TaskDto>> Get(string userId)
         {
@@ -38,6 +42,12 @@ namespace MyTasks_WebAPI.Controllers
             return response;
         }
 
+        /// <summary>
+        /// Get task by id and userId
+        /// </summary>
+        /// <param name="id">Task id</param>
+        /// <param name="userId">Logged userId</param>
+        /// <returns>DataResponse - TaskDto</returns>
         [HttpGet("{id}")]
         public DataResponse<TaskDto> Get(int id, string userId)
         {
@@ -56,6 +66,11 @@ namespace MyTasks_WebAPI.Controllers
             return response;
         }
 
+        /// <summary>
+        /// Add task
+        /// </summary>
+        /// <param name="taskDto">TaskDto object</param>
+        /// <returns>DataResponse - int</returns>
         [HttpPost]
         public DataResponse<int> Add(TaskDto taskDto)
         {
@@ -77,6 +92,11 @@ namespace MyTasks_WebAPI.Controllers
             return response;
         }
 
+        /// <summary>
+        /// Update task
+        /// </summary>
+        /// <param name="taskDto">TaskDto object</param>
+        /// <returns>Response</returns>
         [HttpPut]
         public Response Update(TaskDto taskDto)
         {
@@ -96,6 +116,12 @@ namespace MyTasks_WebAPI.Controllers
             return response;
         }
 
+        /// <summary>
+        /// Delete task by task id and userId
+        /// </summary>
+        /// <param name="id">Task id</param>
+        /// <param name="userId">Logged userId</param>
+        /// <returns>Response</returns>
         [HttpDelete]
         public Response Delete(int id, string userId)
         {
