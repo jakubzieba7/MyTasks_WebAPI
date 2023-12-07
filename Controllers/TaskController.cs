@@ -3,6 +3,8 @@ using MyTasks_WebAPI.Models.Response;
 using MyTasks_WebAPI.Models;
 using Task = MyTasks_WebAPI.Models.Domains.Task;
 using Microsoft.AspNetCore.Authorization;
+using MyTasks_WebAPI.Models.DTOs;
+using MyTasks_WebAPI.Models.Converters;
 
 namespace MyTasks_WebAPI.Controllers
 {
@@ -19,13 +21,13 @@ namespace MyTasks_WebAPI.Controllers
 
 
         [HttpGet(Name = "Get tasks"), Authorize]
-        public DataResponse<IEnumerable<Task>> Get(string userId)
+        public DataResponse<IEnumerable<TaskDto>> Get(string userId)
         {
-            var response = new DataResponse<IEnumerable<Task>>();
+            var response = new DataResponse<IEnumerable<TaskDto>>();
 
             try
             {
-                response.Data = _unitOfWork.TaskRepository.Get(userId);
+                response.Data = _unitOfWork.TaskRepository.Get(userId)?.ToDtos();
             }
             catch (Exception exception)
             {
@@ -37,13 +39,13 @@ namespace MyTasks_WebAPI.Controllers
         }
 
         [HttpGet("{id}")]
-        public DataResponse<Task> Get(int id, string userId)
+        public DataResponse<TaskDto> Get(int id, string userId)
         {
-            var response = new DataResponse<Task>();
+            var response = new DataResponse<TaskDto>();
 
             try
             {
-                response.Data = _unitOfWork.TaskRepository.Get(id, userId);
+                response.Data = _unitOfWork.TaskRepository.Get(id, userId)?.ToDto();
             }
             catch (Exception exception)
             {
@@ -55,12 +57,13 @@ namespace MyTasks_WebAPI.Controllers
         }
 
         [HttpPost]
-        public DataResponse<int> Add(Task task)
+        public DataResponse<int> Add(TaskDto taskDto)
         {
             var response = new DataResponse<int>();
 
             try
             {
+                var task=taskDto.ToDao();
                 _unitOfWork.TaskRepository.Add(task);
                 _unitOfWork.Complete();
                 response.Data = task.Id;
@@ -75,13 +78,13 @@ namespace MyTasks_WebAPI.Controllers
         }
 
         [HttpPut]
-        public Response Update(Task task)
+        public Response Update(TaskDto taskDto)
         {
             var response = new Response();
 
             try
             {
-                _unitOfWork.TaskRepository.Update(task);
+                _unitOfWork.TaskRepository.Update(taskDto.ToDao());
                 _unitOfWork.Complete();
             }
             catch (Exception exception)

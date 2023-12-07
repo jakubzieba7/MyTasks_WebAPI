@@ -2,6 +2,8 @@
 using MyTasks_WebAPI.Models.Response;
 using MyTasks_WebAPI.Models;
 using MyTasks_WebAPI.Models.Domains;
+using MyTasks_WebAPI.Models.DTOs;
+using MyTasks_WebAPI.Models.Converters;
 
 namespace MyTasks_WebAPI.Controllers
 {
@@ -18,13 +20,13 @@ namespace MyTasks_WebAPI.Controllers
 
 
         [HttpGet]
-        public DataResponse<IEnumerable<Category>> Get(string userId)
+        public DataResponse<IEnumerable<CategoryDto>> Get(string userId)
         {
-            var response = new DataResponse<IEnumerable<Category>>();
+            var response = new DataResponse<IEnumerable<CategoryDto>>();
 
             try
             {
-                response.Data = _unitOfWork.CategoryRepository.GetCategories(userId);
+                response.Data = _unitOfWork.CategoryRepository.GetCategories(userId)?.ToDtos();
             }
             catch (Exception exception)
             {
@@ -36,13 +38,13 @@ namespace MyTasks_WebAPI.Controllers
         }
 
         [HttpGet("{id}")]
-        public DataResponse<Category> Get(int id, string userId)
+        public DataResponse<CategoryDto> Get(int id, string userId)
         {
-            var response = new DataResponse<Category>();
+            var response = new DataResponse<CategoryDto>();
 
             try
             {
-                response.Data = _unitOfWork.CategoryRepository.Get(id, userId);
+                response.Data = _unitOfWork.CategoryRepository.Get(id, userId)?.ToDto();
             }
             catch (Exception exception)
             {
@@ -54,12 +56,13 @@ namespace MyTasks_WebAPI.Controllers
         }
 
         [HttpPost]
-        public DataResponse<int> Add(Category category)
+        public DataResponse<int> Add(CategoryDto categoryDto)
         {
             var response = new DataResponse<int>();
 
             try
             {
+                var category = categoryDto.ToDao();
                 _unitOfWork.CategoryRepository.Add(category);
                 _unitOfWork.Complete();
                 response.Data = category.Id;
@@ -74,13 +77,13 @@ namespace MyTasks_WebAPI.Controllers
         }
 
         [HttpPut]
-        public Response Update(Category category)
+        public Response Update(CategoryDto category)
         {
             var response = new Response();
 
             try
             {
-                _unitOfWork.CategoryRepository.Update(category);
+                _unitOfWork.CategoryRepository.Update(category.ToDao());
                 _unitOfWork.Complete();
             }
             catch (Exception exception)
