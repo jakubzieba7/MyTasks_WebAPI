@@ -1,31 +1,30 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using MyTasks_WebAPI.Models.Response;
 using MyTasks_WebAPI.Models;
-using Task = MyTasks_WebAPI.Models.Domains.Task;
-using Microsoft.AspNetCore.Authorization;
+using MyTasks_WebAPI.Models.Domains;
 
 namespace MyTasks_WebAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class TaskController : ControllerBase
+    public class CategoryController : ControllerBase
     {
         private readonly UnitOfWork _unitOfWork;
 
-        public TaskController(UnitOfWork unitOfWork)
+        public CategoryController(UnitOfWork unitOfWork)
         {
             _unitOfWork = unitOfWork;
         }
 
 
-        [HttpGet(Name = "Get tasks"), Authorize]
-        public DataResponse<IEnumerable<Task>> Get(string userId)
+        [HttpGet]
+        public DataResponse<IEnumerable<Category>> Get(string userId)
         {
-            var response = new DataResponse<IEnumerable<Task>>();
+            var response = new DataResponse<IEnumerable<Category>>();
 
             try
             {
-                response.Data = _unitOfWork.TaskRepository.Get(userId);
+                response.Data = _unitOfWork.CategoryRepository.GetCategories(userId);
             }
             catch (Exception exception)
             {
@@ -37,13 +36,13 @@ namespace MyTasks_WebAPI.Controllers
         }
 
         [HttpGet("{id}")]
-        public DataResponse<Task> Get(int id, string userId)
+        public DataResponse<Category> Get(int id, string userId)
         {
-            var response = new DataResponse<Task>();
+            var response = new DataResponse<Category>();
 
             try
             {
-                response.Data = _unitOfWork.TaskRepository.Get(id, userId);
+                response.Data = _unitOfWork.CategoryRepository.Get(id, userId);
             }
             catch (Exception exception)
             {
@@ -55,15 +54,15 @@ namespace MyTasks_WebAPI.Controllers
         }
 
         [HttpPost]
-        public DataResponse<int> Add(Task task)
+        public DataResponse<int> Add(Category category)
         {
             var response = new DataResponse<int>();
 
             try
             {
-                _unitOfWork.TaskRepository.Add(task);
+                _unitOfWork.CategoryRepository.Add(category);
                 _unitOfWork.Complete();
-                response.Data = task.Id;
+                response.Data = category.Id;
             }
             catch (Exception exception)
             {
@@ -75,13 +74,13 @@ namespace MyTasks_WebAPI.Controllers
         }
 
         [HttpPut]
-        public Response Update(Task task)
+        public Response Update(Category category)
         {
             var response = new Response();
 
             try
             {
-                _unitOfWork.TaskRepository.Update(task);
+                _unitOfWork.CategoryRepository.Update(category);
                 _unitOfWork.Complete();
             }
             catch (Exception exception)
@@ -100,7 +99,7 @@ namespace MyTasks_WebAPI.Controllers
 
             try
             {
-                _unitOfWork.TaskRepository.Delete(id, userId);
+                _unitOfWork.CategoryRepository.Delete(id, userId);
                 _unitOfWork.Complete();
             }
             catch (Exception exception)

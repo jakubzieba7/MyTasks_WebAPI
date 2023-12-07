@@ -14,7 +14,7 @@ namespace MyTasks_WebAPI.Models.Repositories
 
         public IEnumerable<Task> Get(string userId)
         {
-            return _context.Tasks.Include(x => x.Category).Where(x => x.UserId == userId).OrderBy(x => x.Term).ToList();
+            return _context.Tasks.Where(x => x.UserId == userId).OrderBy(x => x.Term).ToList();
         }
 
         public Task Get(int id, string userId)
