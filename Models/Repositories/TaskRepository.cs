@@ -12,9 +12,14 @@ namespace MyTasks_WebAPI.Models.Repositories
             _context = context;
         }
 
-        public IEnumerable<Task> Get(string userId)
+        public IEnumerable<Task> Get(PaginationFilter paginationFilter, string userId)
         {
-            return _context.Tasks.Where(x => x.UserId == userId).OrderBy(x => x.Term).ToList();
+            return _context.Tasks
+                            .OrderBy(x => x.Term)
+                            .Skip((paginationFilter.PageNumber - 1) * paginationFilter.PageSize)
+                            .Take(paginationFilter.PageSize)
+                            .Where(x => x.UserId == userId)
+                            .ToList();
         }
 
         public Task Get(int id, string userId)

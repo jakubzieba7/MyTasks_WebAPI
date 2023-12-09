@@ -25,13 +25,13 @@ namespace MyTasks_WebAPI.Controllers
         /// <param name="userId">Logged userId</param>
         /// <returns>DataResponse - IEnumerable TaskDto</returns>
         [HttpGet(Name = "Get tasks"), Authorize]
-        public DataResponse<IEnumerable<TaskDto>> Get(string userId)
+        public DataResponse<IEnumerable<TaskDto>> Get([FromQuery] PaginationFilter paginationFilter, string userId)
         {
             var response = new DataResponse<IEnumerable<TaskDto>>();
 
             try
             {
-                response.Data = _unitOfWork.TaskRepository.Get(userId)?.ToDtos();
+                response.Data = _unitOfWork.TaskRepository.Get(paginationFilter, userId)?.ToDtos();
             }
             catch (Exception exception)
             {
