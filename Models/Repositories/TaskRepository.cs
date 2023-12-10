@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using MyTasks_WebAPI.Models.Data;
+using MyTasks_WebAPI.Models.Domains;
 using Task = MyTasks_WebAPI.Models.Domains.Task;
 
 namespace MyTasks_WebAPI.Models.Repositories
@@ -15,10 +16,10 @@ namespace MyTasks_WebAPI.Models.Repositories
         public IEnumerable<Task> Get(PaginationFilter paginationFilter, string userId)
         {
             return _context.Tasks
+                            .Where(x => x.UserId == userId)
                             .OrderBy(x => x.Term)
                             .Skip((paginationFilter.PageNumber - 1) * paginationFilter.PageSize)
                             .Take(paginationFilter.PageSize)
-                            .Where(x => x.UserId == userId)
                             .ToList();
         }
 
@@ -48,6 +49,13 @@ namespace MyTasks_WebAPI.Models.Repositories
             var taskToDelete = _context.Tasks.Single(x => x.Id == id && x.UserId == userId);
 
             _context.Tasks.Remove(taskToDelete);
+        }
+
+        public Category CategoryVerification(Task task)
+        {
+            var isCategoryIdExist = _context.Categories.First(x => x.Id == task.CategoryId && x.UserId == task.UserId);
+
+            return isCategoryIdExist;
         }
     }
 }

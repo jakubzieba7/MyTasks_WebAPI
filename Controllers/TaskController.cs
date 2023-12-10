@@ -83,6 +83,7 @@ namespace MyTasks_WebAPI.Controllers
             {
                 var task = taskDto.ToDao();
                 task.UserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                _unitOfWork.TaskRepository.CategoryVerification(task);
                 _unitOfWork.TaskRepository.Add(task);
                 _unitOfWork.Complete();
                 response.Data = task.Id;
@@ -110,6 +111,7 @@ namespace MyTasks_WebAPI.Controllers
             {
                 var task = taskDto.ToDao();
                 task.UserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                _unitOfWork.TaskRepository.CategoryVerification(task);
                 _unitOfWork.TaskRepository.Update(task);
                 _unitOfWork.Complete();
             }
