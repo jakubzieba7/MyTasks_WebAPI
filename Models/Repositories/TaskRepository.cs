@@ -49,12 +49,5 @@ namespace MyTasks_WebAPI.Models.Repositories
 
             _context.Tasks.Remove(taskToDelete);
         }
-
-        public void Finish(int id, string userId)
-        {
-            var taskToUpdate = _context.Tasks.Single(x => x.Id == id && x.UserId == userId);
-
-            taskToUpdate.IsExecuted = true;
-        }
     }
 }

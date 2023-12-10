@@ -3,11 +3,14 @@ using MyTasks_WebAPI.Models.Response;
 using MyTasks_WebAPI.Models;
 using MyTasks_WebAPI.Models.DTOs;
 using MyTasks_WebAPI.Models.Converters;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 
 namespace MyTasks_WebAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class CategoryController : ControllerBase
     {
         private readonly UnitOfWork _unitOfWork;
@@ -20,12 +23,12 @@ namespace MyTasks_WebAPI.Controllers
         /// <summary>
         /// Get all categories by logged userId
         /// </summary>
-        /// <param name="userId">Logged userId</param>
         /// <returns>DataResponse - CategoryDto</returns>
         [HttpGet]
-        public DataResponse<IEnumerable<CategoryDto>> Get(string userId)
+        public DataResponse<IEnumerable<CategoryDto>> Get()
         {
             var response = new DataResponse<IEnumerable<CategoryDto>>();
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
             try
             {
@@ -44,12 +47,12 @@ namespace MyTasks_WebAPI.Controllers
         /// Get category by category id
         /// </summary>
         /// <param name="id">Category id</param>
-        /// <param name="userId">Logged userId</param>
         /// <returns>DataResponse - CategoryDto</returns>
         [HttpGet("{id}")]
-        public DataResponse<CategoryDto> Get(int id, string userId)
+        public DataResponse<CategoryDto> Get(int id)
         {
             var response = new DataResponse<CategoryDto>();
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
             try
             {
@@ -77,6 +80,7 @@ namespace MyTasks_WebAPI.Controllers
             try
             {
                 var category = categoryDto.ToDao();
+                category.UserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
                 _unitOfWork.CategoryRepository.Add(category);
                 _unitOfWork.Complete();
                 response.Data = category.Id;
@@ -93,16 +97,18 @@ namespace MyTasks_WebAPI.Controllers
         /// <summary>
         /// Update category 
         /// </summary>
-        /// <param name="category">CategoryDto object</param>
+        /// <param name="categoryDto">CategoryDto object</param>
         /// <returns>Response</returns>
         [HttpPut]
-        public Response Update(CategoryDto category)
+        public Response Update(CategoryDto categoryDto)
         {
             var response = new Response();
 
             try
             {
-                _unitOfWork.CategoryRepository.Update(category.ToDao());
+                var category = categoryDto.ToDao();
+                category.UserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                _unitOfWork.CategoryRepository.Update(category);
                 _unitOfWork.Complete();
             }
             catch (Exception exception)
@@ -118,12 +124,12 @@ namespace MyTasks_WebAPI.Controllers
         /// Delete category by category id and userId
         /// </summary>
         /// <param name="id">Category id</param>
-        /// <param name="userId">Logged userId</param>
         /// <returns>Response</returns>
         [HttpDelete]
-        public Response Delete(int id, string userId)
+        public Response Delete(int id)
         {
             var response = new Response();
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
             try
             {

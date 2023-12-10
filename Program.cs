@@ -62,9 +62,6 @@ namespace MyTasks_WebAPI
             builder.Services.AddAuthentication().AddBearerToken(IdentityConstants.BearerScheme);
             builder.Services.AddAuthentication(IdentityConstants.ApplicationScheme).AddIdentityCookies();
             builder.Services.AddAuthorizationBuilder();
-            
-            //builder.Services.AddAuthorization();
-            //builder.Services.AddIdentityApiEndpoints<ApplicationUser>().AddEntityFrameworkStores<ApplicationDbContext>().AddApiEndpoints();
 
             builder.Services.AddIdentityCore<ApplicationUser>().AddEntityFrameworkStores<ApplicationDbContext>().AddApiEndpoints();
 
