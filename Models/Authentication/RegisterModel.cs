@@ -5,7 +5,7 @@ namespace MyTasks_WebAPI.Models.Authentication
     public class RegisterModel
     {
         [Required(ErrorMessage = "User Name is required")]
-        public string Username { get; set; }
+        public string UserName { get; set; }
 
         [EmailAddress]
         [Required(ErrorMessage = "Email is required")]
@@ -13,5 +13,7 @@ namespace MyTasks_WebAPI.Models.Authentication
 
         [Required(ErrorMessage = "Password is required")]
         public string Password { get; set; }
+        [Required(ErrorMessage = "UserRole is required")]
+        public string UserRole { get; set; }
     }
 }
