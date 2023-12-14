@@ -1,4 +1,3 @@
-using Microsoft.AspNetCore.Authentication.BearerToken;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -7,9 +6,7 @@ using Microsoft.OpenApi.Models;
 using MyTasks_WebAPI.Models;
 using MyTasks_WebAPI.Models.Data;
 using MyTasks_WebAPI.Models.Domains;
-using NuGet.Configuration;
 using Swashbuckle.AspNetCore.Filters;
-using System.Configuration;
 using System.Reflection;
 using System.Security.Claims;
 using System.Text;
@@ -23,6 +20,7 @@ namespace MyTasks_WebAPI
             var builder = WebApplication.CreateBuilder(args);
 
             builder.Services.AddScoped<UnitOfWork, UnitOfWork>();
+            builder.Services.AddScoped<TokenService, TokenService>();               //JWT
 
             // Add services to the container.
 
@@ -31,16 +29,16 @@ namespace MyTasks_WebAPI
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen(options =>
             {
-                //options.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme
-                //{
-                //    In = ParameterLocation.Header,
-                //    Name = "Authorization",
-                //    Type = SecuritySchemeType.ApiKey
-                //});
-
-                options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme()
+                options.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme   //Bearer tokens and cookies
                 {
-                    Name = "Authorization",
+                    In = ParameterLocation.Header,
+                    Name = "Authorization Bearer Token",
+                    Type = SecuritySchemeType.ApiKey
+                });
+
+                options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme() //JWT
+                {
+                    Name = "Authorization JWT Bearer",
                     Type = SecuritySchemeType.ApiKey,
                     Scheme = "Bearer",
                     BearerFormat = "JWT",
@@ -48,7 +46,7 @@ namespace MyTasks_WebAPI
                     Description = "JWT Authorization header using the Bearer scheme. \r\n\r\n Enter 'Bearer' [space] and then your token in the text input below.\r\n\r\nExample: \"Bearer 1safsfsdfdfd\"",
                 });
 
-                options.AddSecurityRequirement(new OpenApiSecurityRequirement
+                options.AddSecurityRequirement(new OpenApiSecurityRequirement       //JWT
                 {
                   {
                     new OpenApiSecurityScheme
@@ -90,11 +88,15 @@ namespace MyTasks_WebAPI
 
             builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-            //builder.Services.AddAuthentication().AddBearerToken(IdentityConstants.BearerScheme);
-            ////builder.Services.AddAuthentication(IdentityConstants.ApplicationScheme).AddIdentityCookies();
+            builder.Services.AddAuthentication().AddBearerToken(IdentityConstants.BearerScheme);                    //Bearer tokens and cookies
+            ////builder.Services.AddAuthentication(IdentityConstants.ApplicationScheme).AddIdentityCookies();       //Bearer tokens and cookies
+
+            builder.Services.AddIdentity<ApplicationUser, IdentityRole>()                                           //JWT
+                           .AddEntityFrameworkStores<ApplicationDbContext>();
+            //.AddDefaultTokenProviders();
 
             // Adding Authentication
-            builder.Services.AddAuthentication(options =>
+            builder.Services.AddAuthentication(options =>                                                           //JWT
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                 options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -102,7 +104,7 @@ namespace MyTasks_WebAPI
             })
 
             // Adding Jwt Bearer
-            .AddJwtBearer(options =>
+            .AddJwtBearer(options =>                                                                                 //JWT                           
             {
                 options.SaveToken = true;
                 options.RequireHttpsMetadata = false;
@@ -119,18 +121,8 @@ namespace MyTasks_WebAPI
                 };
             });
 
-
-
-
             builder.Services.AddAuthorizationBuilder();
-
-            //builder.Services.AddIdentityCore<ApplicationUser>().AddEntityFrameworkStores<ApplicationDbContext>().AddApiEndpoints();
-
-            builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
-                            .AddEntityFrameworkStores<ApplicationDbContext>()
-                            .AddDefaultTokenProviders();
-
-
+            builder.Services.AddIdentityCore<ApplicationUser>().AddEntityFrameworkStores<ApplicationDbContext>().AddApiEndpoints();     //Bearer tokens and cookies
 
             var app = builder.Build();
 
@@ -142,10 +134,11 @@ namespace MyTasks_WebAPI
             }
 
             //adds the Identity endpoints
-            app.MapIdentityApi<ApplicationUser>();
+            app.MapIdentityApi<ApplicationUser>();                                                                                      //Bearer tokens and cookies
 
 
             app.UseHttpsRedirection();
+            //app.UseAuthentication();
 
             app.UseAuthorization();
 

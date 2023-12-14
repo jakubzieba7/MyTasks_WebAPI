@@ -35,10 +35,10 @@ namespace MyTasks_WebAPI.Controllers
 
                 return Ok(new
                 {
-                    api_key = token,
+                    bearer_JWT = token,
                     user = user,
                     Role = userRoles,
-                    status = "User Login Successfully"
+                    status = "User logged-in successfully"
                 });
             }
 

@@ -10,7 +10,7 @@ namespace MyTasks_WebAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
+    [Authorize(Roles="Admin")]
     public class CategoryController : ControllerBase
     {
         private readonly UnitOfWork _unitOfWork;
