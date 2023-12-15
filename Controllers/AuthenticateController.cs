@@ -24,6 +24,13 @@ namespace MyTasks_WebAPI.Controllers
             _unitOfWork = unitOfWork;
         }
 
+        /// <summary>
+        /// Login with creation JWT Bearer
+        /// </summary>
+        /// <param name="model">UserName and Password from LoginModel</param>
+        /// <returns>OkObjectResult with JWT Bearer or UnathorizedResult</returns>
+        /// <response code="200">Returns the newly created user</response>
+        /// <response code="401">Returns unauthorized when no user was found or password was incorrect</response>
         [HttpPost]
         [Route("login")]
         public async Task<IActionResult> Login([FromBody] LoginModel model)
@@ -47,6 +54,13 @@ namespace MyTasks_WebAPI.Controllers
             return Unauthorized();
         }
 
+        /// <summary>
+        /// Register new user for roles authentication purposes
+        /// </summary>
+        /// <param name="model">UserName, Email, Password, UserRole from RegisterModel</param>
+        /// <returns>Status500InternalServerError or OkObjectResult</returns>
+        /// <remarks></remarks>
+        /// <response code="200">Success</response>
         [HttpPost]
         [Route("Register")]
         public async Task<IActionResult> Register([FromBody] RegisterModel model)
