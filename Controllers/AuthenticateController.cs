@@ -14,12 +14,14 @@ namespace MyTasks_WebAPI.Controllers
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly TokenService _tokenService;
+        private readonly UnitOfWork _unitOfWork;
 
-        public AuthenticateController(UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager, TokenService tokenService)
+        public AuthenticateController(UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager, TokenService tokenService, UnitOfWork unitOfWork)
         {
             _userManager = userManager;
             _roleManager = roleManager;
             _tokenService = tokenService;
+            _unitOfWork = unitOfWork;
         }
 
         [HttpPost]
@@ -60,6 +62,8 @@ namespace MyTasks_WebAPI.Controllers
                 Email = model.Email,
                 PasswordHash = model.Password,
             };
+
+            _unitOfWork.CategoryRepository.AddDefaultCategory(appUser.Id);
 
             var result = await _userManager.CreateAsync(appUser, model.Password);
 

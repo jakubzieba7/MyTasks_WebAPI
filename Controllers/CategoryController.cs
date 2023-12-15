@@ -29,6 +29,7 @@ namespace MyTasks_WebAPI.Controllers
         {
             var response = new DataResponse<IEnumerable<CategoryDto>>();
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            _unitOfWork.CategoryRepository.AddDefaultCategory(userId);
 
             try
             {

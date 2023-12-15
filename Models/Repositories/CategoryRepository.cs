@@ -42,5 +42,18 @@ namespace MyTasks_WebAPI.Models.Repositories
 
             _context.Categories.Remove(categoryToDelete);
         }
+
+        public void AddDefaultCategory(string userId)
+        {
+            bool IsAnyCategoryExist = _context.Categories.Where(x => x.UserId == userId).Any();
+            Category defaultCategory = new Category()
+            {
+                UserId = userId,
+                Name = "Default",
+            };
+
+            if (!IsAnyCategoryExist)
+                _context.Categories.Add(defaultCategory);
+        }
     }
 }
