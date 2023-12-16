@@ -24,8 +24,6 @@ namespace MyTasks_WebAPI.Models.Repositories
 
         public void Add(Category category)
         {
-            var categories = _context.Categories.Where(x => x.UserId == category.UserId);
-
             _context.Categories.Add(category);
         }
 

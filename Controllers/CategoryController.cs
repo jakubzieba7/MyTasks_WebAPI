@@ -73,6 +73,7 @@ namespace MyTasks_WebAPI.Controllers
         /// </summary>
         /// <param name="categoryDto">CategoryDto object</param>
         /// <returns>DataResponse - int</returns>
+        /// <response code="403">Forbidden - User has no priviliges to add Category. Only Admin can do that. Please login with admin UserRole.</response>
         [HttpPost]
         public DataResponse<int> Add(CategoryDto categoryDto)
         {

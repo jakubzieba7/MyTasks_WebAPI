@@ -51,9 +51,9 @@ namespace MyTasks_WebAPI.Models.Repositories
             _context.Tasks.Remove(taskToDelete);
         }
 
-        public Category CategoryVerification(Task task)
+        public bool CategoryVerification(Task task)
         {
-            var isCategoryIdExist = _context.Categories.First(x => x.Id == task.CategoryId && x.UserId == task.UserId);
+            var isCategoryIdExist = _context.Categories.Any(x => x.Id == task.CategoryId && x.UserId == task.UserId);
 
             return isCategoryIdExist;
         }

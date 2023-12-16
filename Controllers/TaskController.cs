@@ -83,7 +83,13 @@ namespace MyTasks_WebAPI.Controllers
             {
                 var task = taskDto.ToDao();
                 task.UserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-                _unitOfWork.TaskRepository.CategoryVerification(task);
+
+                if (!_unitOfWork.TaskRepository.CategoryVerification(task))
+                {
+                    response.Status = "Adding a new Task resulted unsuccessfully";
+                    throw new ArgumentException(response.Message = "There is no Category with mentioned Id for the current User. Please change CategoryId and run it again.");
+                }
+
                 _unitOfWork.TaskRepository.Add(task);
                 _unitOfWork.Complete();
                 response.Data = task.Id;
@@ -111,7 +117,13 @@ namespace MyTasks_WebAPI.Controllers
             {
                 var task = taskDto.ToDao();
                 task.UserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-                _unitOfWork.TaskRepository.CategoryVerification(task);
+
+                if (!_unitOfWork.TaskRepository.CategoryVerification(task))
+                {
+                    response.Status = "Updating the Task resulted unsuccessfully";
+                    throw new ArgumentException(response.Message = "There is no Category with mentioned Id for the current User. Please change CategoryId and run it again.");
+                }
+
                 _unitOfWork.TaskRepository.Update(task);
                 _unitOfWork.Complete();
             }
