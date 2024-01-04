@@ -1,16 +1,15 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using MyTasks_WebAPI.Models.Response;
 using MyTasks_WebAPI.Models;
-using MyTasks_WebAPI.Models.DTOs;
 using MyTasks_WebAPI.Models.Converters;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
+using MyTasks_WebAPI.Core.Response;
+using MyTasks_WebAPI.Core.DTOs;
 
 namespace MyTasks_WebAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(Roles="Admin")]
     public class CategoryController : ControllerBase
     {
         private readonly UnitOfWork _unitOfWork;
@@ -75,6 +74,7 @@ namespace MyTasks_WebAPI.Controllers
         /// <returns>DataResponse - int</returns>
         /// <response code="403">Forbidden - User has no priviliges to add Category. Only Admin can do that. Please login with admin UserRole.</response>
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public DataResponse<int> Add(CategoryDto categoryDto)
         {
             var response = new DataResponse<int>();
@@ -101,7 +101,9 @@ namespace MyTasks_WebAPI.Controllers
         /// </summary>
         /// <param name="categoryDto">CategoryDto object</param>
         /// <returns>Response</returns>
+        /// <response code="403">Forbidden - User has no priviliges to add Category. Only Admin can do that. Please login with admin UserRole.</response>
         [HttpPut]
+        [Authorize(Roles = "Admin")]
         public Response Update(CategoryDto categoryDto)
         {
             var response = new Response();
@@ -127,7 +129,9 @@ namespace MyTasks_WebAPI.Controllers
         /// </summary>
         /// <param name="id">Category id</param>
         /// <returns>Response</returns>
+        /// <response code="403">Forbidden - User has no priviliges to add Category. Only Admin can do that. Please login with admin UserRole.</response>
         [HttpDelete]
+        [Authorize(Roles = "Admin")]
         public Response Delete(int id)
         {
             var response = new Response();

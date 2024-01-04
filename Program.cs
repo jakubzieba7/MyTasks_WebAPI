@@ -51,11 +51,11 @@ namespace MyTasks_WebAPI
                   {
                     new OpenApiSecurityScheme
                     {
-                    Reference = new OpenApiReference
-                    {
-                    Type = ReferenceType.SecurityScheme,
-                    Id = "Bearer"
-                    }
+                        Reference = new OpenApiReference
+                        {
+                            Type = ReferenceType.SecurityScheme,
+                            Id = "Bearer"
+                        }
                     },
                     new string[] {}
                   }

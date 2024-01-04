@@ -1,6 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using MyTasks_WebAPI.Core;
 using MyTasks_WebAPI.Models.Data;
-using MyTasks_WebAPI.Models.Domains;
 using Task = MyTasks_WebAPI.Models.Domains.Task;
 
 namespace MyTasks_WebAPI.Models.Repositories

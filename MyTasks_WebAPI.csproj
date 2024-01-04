@@ -27,4 +27,8 @@
     <Folder Include="Models\Data\Migrations\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\MyTasks_WebAPI.Core\MyTasks_WebAPI.Core.csproj" />
+  </ItemGroup>
+
 </Project>

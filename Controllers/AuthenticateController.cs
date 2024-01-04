@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using MyTasks_WebAPI.Models;
 using MyTasks_WebAPI.Models.Authentication;
 using MyTasks_WebAPI.Models.Domains;
-using MyTasks_WebAPI.Models.Response;
+using MyTasks_WebAPI.Core.Response;
 
 namespace MyTasks_WebAPI.Controllers
 {

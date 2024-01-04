@@ -1,10 +1,11 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using MyTasks_WebAPI.Models.Response;
+using MyTasks_WebAPI.Core.Response;
 using MyTasks_WebAPI.Models;
 using Microsoft.AspNetCore.Authorization;
-using MyTasks_WebAPI.Models.DTOs;
+using MyTasks_WebAPI.Core.DTOs;
 using MyTasks_WebAPI.Models.Converters;
 using System.Security.Claims;
+using MyTasks_WebAPI.Core;
 
 namespace MyTasks_WebAPI.Controllers
 {

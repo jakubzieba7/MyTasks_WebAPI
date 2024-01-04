@@ -1,4 +1,4 @@
-﻿using MyTasks_WebAPI.Models.DTOs;
+﻿using MyTasks_WebAPI.Core.DTOs;
 using Task = MyTasks_WebAPI.Models.Domains.Task;
 
 namespace MyTasks_WebAPI.Models.Converters

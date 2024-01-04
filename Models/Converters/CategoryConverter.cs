@@ -1,5 +1,5 @@
 ﻿using MyTasks_WebAPI.Models.Domains;
-using MyTasks_WebAPI.Models.DTOs;
+using MyTasks_WebAPI.Core.DTOs;
 
 namespace MyTasks_WebAPI.Models.Converters
 {
