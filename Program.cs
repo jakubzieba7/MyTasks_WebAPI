@@ -18,9 +18,14 @@ namespace MyTasks_WebAPI
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+            var isJWTBearerTokenActive = bool.Parse(builder.Configuration["AuthenticationSettings:IsJWTBearerTokenActive"]);
+            var isSPABearerTokenActive = bool.Parse(builder.Configuration["AuthenticationSettings:IsSPABearerTokenActive"]);
+            var isUsingCookies = bool.Parse(builder.Configuration["SPABearerTokenOptions:IsUsingCookies"]);
 
             builder.Services.AddScoped<UnitOfWork, UnitOfWork>();
-            builder.Services.AddScoped<TokenService, TokenService>();               //JWT
+
+            if (isJWTBearerTokenActive)
+                builder.Services.AddScoped<TokenService, TokenService>();               //JWT
 
             // Add services to the container.
 
@@ -29,38 +34,43 @@ namespace MyTasks_WebAPI
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen(options =>
             {
-                options.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme   //Bearer tokens and cookies
+                if (isSPABearerTokenActive)
                 {
-                    In = ParameterLocation.Header,
-                    Name = "Authorization Bearer Token",
-                    Type = SecuritySchemeType.ApiKey
-                });
-
-                options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme() //JWT
-                {
-                    Name = "Authorization JWT Bearer",
-                    Type = SecuritySchemeType.ApiKey,
-                    Scheme = "Bearer",
-                    BearerFormat = "JWT",
-                    In = ParameterLocation.Header,
-                    Description = "JWT Authorization header using the Bearer scheme. \r\n\r\n Enter 'Bearer' [space] and then your token in the text input below.\r\n\r\nExample: \"Bearer 1safsfsdfdfd\"",
-                });
-
-                options.AddSecurityRequirement(new OpenApiSecurityRequirement       //JWT
-                {
-                  {
-                    new OpenApiSecurityScheme
+                    options.AddSecurityDefinition("Bearer Token", new OpenApiSecurityScheme()   //Bearer tokens and cookies
                     {
-                        Reference = new OpenApiReference
-                        {
-                            Type = ReferenceType.SecurityScheme,
-                            Id = "Bearer"
-                        }
-                    },
-                    new string[] {}
-                  }
-                });
+                        In = ParameterLocation.Header,
+                        Name = "Authorization Bearer Token",
+                        Type = SecuritySchemeType.ApiKey
+                    });
+                }
 
+                if (isJWTBearerTokenActive)
+                {
+                    options.AddSecurityDefinition("JWT Bearer", new OpenApiSecurityScheme() //JWT
+                    {
+                        Name = "Authorization JWT Bearer",
+                        Type = SecuritySchemeType.ApiKey,
+                        Scheme = "Bearer",
+                        BearerFormat = "JWT",
+                        In = ParameterLocation.Header,
+                        Description = "JWT Authorization header using the Bearer scheme. \r\n\r\n Enter 'Bearer' [space] and then your token in the text input below.\r\n\r\nExample: \"Bearer 1safsfsdfdfd\"",
+                    });
+
+                    options.AddSecurityRequirement(new OpenApiSecurityRequirement       //JWT
+                    {
+                      {
+                        new OpenApiSecurityScheme
+                        {
+                            Reference = new OpenApiReference
+                            {
+                                Type = ReferenceType.SecurityScheme,
+                                Id = "Bearer"
+                            }
+                        },
+                        new string[] {}
+                      }
+                    });
+                }
                 options.OperationFilter<SecurityRequirementsOperationFilter>();
 
                 options.SwaggerDoc("v1", new OpenApiInfo
@@ -88,41 +98,49 @@ namespace MyTasks_WebAPI
 
             builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-            builder.Services.AddAuthentication().AddBearerToken(IdentityConstants.BearerScheme);                    //Bearer tokens and cookies
-            ////builder.Services.AddAuthentication(IdentityConstants.ApplicationScheme).AddIdentityCookies();       //Bearer tokens and cookies
 
-            builder.Services.AddIdentity<ApplicationUser, IdentityRole>()                                           //JWT
-                           .AddEntityFrameworkStores<ApplicationDbContext>();
-            //.AddDefaultTokenProviders();
+            if (isSPABearerTokenActive && isUsingCookies)
+                builder.Services.AddAuthentication(IdentityConstants.ApplicationScheme).AddIdentityCookies();       //Bearer tokens and cookies
+            else
+                builder.Services.AddAuthentication().AddBearerToken(IdentityConstants.BearerScheme);                    //Bearer tokens and cookies
 
-            // Adding Authentication
-            builder.Services.AddAuthentication(options =>                                                           //JWT
+            if (isJWTBearerTokenActive)
             {
-                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-                options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
-            })
+                builder.Services.AddIdentity<ApplicationUser, IdentityRole>()                                           //JWT
+                               .AddEntityFrameworkStores<ApplicationDbContext>();
+                //.AddDefaultTokenProviders();
 
-            // Adding Jwt Bearer
-            .AddJwtBearer(options =>                                                                                 //JWT                           
-            {
-                options.SaveToken = true;
-                options.RequireHttpsMetadata = false;
-                options.TokenValidationParameters = new TokenValidationParameters()
-                {
-                    ValidateIssuerSigningKey = bool.Parse(builder.Configuration["JWTSettings:ValidateIssuerSigningKey"]),
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWTSettings:IssuerSigningKey"])),
-                    ValidateIssuer = bool.Parse(builder.Configuration["JWTSettings:ValidateIssuer"]),
-                    ValidAudience = builder.Configuration["JWTSettings:ValidAudience"],
-                    ValidIssuer = builder.Configuration["JWTSettings:ValidIssuer"],
-                    ValidateAudience = bool.Parse(builder.Configuration["JWTSettings:ValidateAudience"]),
-                    RequireExpirationTime = bool.Parse(builder.Configuration["JWTSettings:RequireExpirationTime"]),
-                    ValidateLifetime = bool.Parse(builder.Configuration["JWTSettings:ValidateLifetime"])
-                };
-            });
+                // Adding Authentication
+                builder.Services
+                    .AddAuthentication(options =>                                                           //JWT
+                    {
+                        options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                        options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                        options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+                    })
 
+                    .AddJwtBearer(options =>                                                                                 //JWT                           
+                    {
+                        options.SaveToken = true;
+                        options.RequireHttpsMetadata = false;
+                        options.TokenValidationParameters = new TokenValidationParameters()
+                        {
+                            ValidateIssuerSigningKey = bool.Parse(builder.Configuration["JWTSettings:ValidateIssuerSigningKey"]),
+                            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWTSettings:IssuerSigningKey"])),
+                            ValidateIssuer = bool.Parse(builder.Configuration["JWTSettings:ValidateIssuer"]),
+                            ValidAudience = builder.Configuration["JWTSettings:ValidAudience"],
+                            ValidIssuer = builder.Configuration["JWTSettings:ValidIssuer"],
+                            ValidateAudience = bool.Parse(builder.Configuration["JWTSettings:ValidateAudience"]),
+                            RequireExpirationTime = bool.Parse(builder.Configuration["JWTSettings:RequireExpirationTime"]),
+                            ValidateLifetime = bool.Parse(builder.Configuration["JWTSettings:ValidateLifetime"])
+                        };
+                    });
+            }
+            
             builder.Services.AddAuthorizationBuilder();
-            builder.Services.AddIdentityCore<ApplicationUser>().AddEntityFrameworkStores<ApplicationDbContext>().AddApiEndpoints();     //Bearer tokens and cookies
+            
+            if (isSPABearerTokenActive)
+                builder.Services.AddIdentityCore<ApplicationUser>().AddEntityFrameworkStores<ApplicationDbContext>().AddApiEndpoints();     //Bearer tokens and cookies
 
             var app = builder.Build();
 
@@ -134,15 +152,16 @@ namespace MyTasks_WebAPI
             }
 
             //adds the Identity endpoints
-            app.MapIdentityApi<ApplicationUser>();                                                                                      //Bearer tokens and cookies
-
+            if (isSPABearerTokenActive)
+                app.MapIdentityApi<ApplicationUser>().WithTags("Identity Bearer Token");                                                    //Bearer tokens and cookies
 
             app.UseHttpsRedirection();
+            
             //app.UseAuthentication();
 
             app.UseAuthorization();
 
-            app.MapGet("/userInfo", (ClaimsPrincipal user) => $"Zalogowany u¿ytkownik to {user.Identity!.Name}").RequireAuthorization();
+            app.MapGet("/userInfo", (ClaimsPrincipal user) => $"Zalogowany u¿ytkownik to {user.Identity!.Name}").RequireAuthorization().WithTags("Check User info");
 
             app.MapControllers();
 

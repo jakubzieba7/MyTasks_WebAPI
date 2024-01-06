@@ -31,6 +31,7 @@ namespace MyTasks_WebAPI.Controllers
         /// <returns>OkObjectResult with JWT Bearer or UnathorizedResult</returns>
         /// <response code="200">Returns the newly created user</response>
         /// <response code="401">Returns unauthorized when no user was found or password was incorrect</response>
+        /// <response code="500">Returns Internal Server Error when IsJWTBearerTokenActive is set on false in appsettings.json</response>
         [HttpPost]
         [Route("login")]
         public async Task<IActionResult> Login([FromBody] LoginModel model)
