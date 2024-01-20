@@ -6,7 +6,9 @@ using Microsoft.OpenApi.Models;
 using MyTasks_WebAPI.Models;
 using MyTasks_WebAPI.Models.Data;
 using MyTasks_WebAPI.Models.Domains;
+using Serilog;
 using Swashbuckle.AspNetCore.Filters;
+using System.Configuration;
 using System.Reflection;
 using System.Security.Claims;
 using System.Text;
@@ -139,10 +141,18 @@ namespace MyTasks_WebAPI
             
             builder.Services.AddAuthorizationBuilder();
             
+            Log.Logger=new LoggerConfiguration()
+                .ReadFrom.Configuration(builder.Configuration)
+                .CreateLogger();
+
+            builder.Host.UseSerilog();
+
             if (isSPABearerTokenActive)
                 builder.Services.AddIdentityCore<ApplicationUser>().AddEntityFrameworkStores<ApplicationDbContext>().AddApiEndpoints();     //Bearer tokens and cookies
 
             var app = builder.Build();
+
+            app.UseSerilogRequestLogging();
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())

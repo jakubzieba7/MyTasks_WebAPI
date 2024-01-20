@@ -89,9 +89,7 @@ namespace MyTasks_WebAPI.Controllers
                 await _roleManager.CreateAsync(new IdentityRole(model.UserRole));
 
             if (await _roleManager.RoleExistsAsync(model.UserRole))
-            {
                 await _userManager.AddToRoleAsync(appUser, model.UserRole);
-            }
 
             return Ok(new Response { Status = "Success", Message = "User created successfully!" });
         }

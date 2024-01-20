@@ -6,6 +6,7 @@ using MyTasks_WebAPI.Core.DTOs;
 using MyTasks_WebAPI.Models.Converters;
 using System.Security.Claims;
 using MyTasks_WebAPI.Core;
+using Serilog;
 
 namespace MyTasks_WebAPI.Controllers
 {
@@ -41,6 +42,8 @@ namespace MyTasks_WebAPI.Controllers
                 //logowanie do pliku
                 response.Errors.Add(new Error(exception.Source, exception.Message));
             }
+
+            Log.Information("Get Tasks => {result}", response);
 
             return response;
         }
