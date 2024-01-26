@@ -161,6 +161,10 @@ namespace MyTasks_WebAPI
                 app.UseSwaggerUI();
             }
 
+            //in order to run on IIS
+            app.UseSwagger();
+            app.UseSwaggerUI();
+
             //adds the Identity endpoints
             if (isSPABearerTokenActive)
                 app.MapIdentityApi<ApplicationUser>().WithTags("Identity Bearer Token");                                                    //Bearer tokens and cookies
